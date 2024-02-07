@@ -3,7 +3,7 @@
 
 <template>
   <div class="bg-gray-800 text-white h-full">
-    <RouterView />
+    <RouterView/>
   </div>
   
 </template>
