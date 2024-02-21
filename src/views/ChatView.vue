@@ -1,25 +1,24 @@
 <script setup>
-    import { ref } from 'vue';
-    import ChatMessage from '@/components/ChatMessage.vue';
+    import { onMounted, ref } from 'vue'
+    import ChatMessage from '@/components/ChatMessage.vue'
+    import AppNavbar from '@/components/AppNavbar.vue'
+    import { useUserStore } from '@/stores/user'
+    import { storeToRefs } from 'pinia'
+    import {insertMessage, fetchMessages} from '@/api/messages'
 
-    const messageText = ref('');
-    const messageList = ref([]);
-    const textarea = ref(null);
+    const messageText = ref('')
+    const messageList = ref([])
+    const textarea = ref(null)
+    const { user } = storeToRefs(useUserStore())
+    onMounted( async () => {
+        messageList.value = await fetchMessages()
+    })
 
-    const addMessage = () => {
-        // Ajouter message liste
-        messageList.value.push({
-            id: Math.random().toString(32).slice(2),
-            text: messageText.value,
-            date: new Date(),
-            user:{
-                username: 'Arthur',
-                avatarUrl: 'https://i.pinimg.com/474x/43/a1/63/43a163901658ae40f37279c49cdcdf4d.jpg'
-            }
-        });
+    const addMessage = async () => {
+        await insertMessage(messageText.value, user.value.id)
         // Vider le contenu du textarea
-        messageText.value = '';
-        textarea.value.focus();
+        messageText.value = ''
+        textarea.value.focus()
     }
 
     const deleteMessage= (id) => {
@@ -29,7 +28,7 @@
 </script>
 
 <template>
-
+    <AppNavbar></AppNavbar>
     <div v-for="(message, index) in messageList" :key="index" class="p-4">
         <ChatMessage @delete="deleteMessage" :message="message"></ChatMessage>
     </div>

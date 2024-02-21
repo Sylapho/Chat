@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ChatView from '@/views/ChatView.vue'
-import supabase from "@supabase/supabase-js"
+import { supabase } from "@/supabase"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/user/:id',
+      path: '/',
       name: 'chat',
       component: ChatView,
       meta:{
@@ -28,13 +28,16 @@ const router = createRouter({
 
 
 
-router.beforEach(async(to, from, next) => { 
-  const {data} = await supabase.auth.getSession()
+router.beforeEach(async(to, from, next) => { 
+  const { data } = await supabase.auth.getSession()
   const isLoggedIn =!!data.session 
-  if(to.matched.some((record) => record.meta.requiresAuth) && !isLoggedIn){
+  const requireAuth = to.matched.some((record) => record.meta.requiresAuth)
+  if(requireAuth && !isLoggedIn){
     next({name: 'login'})
-  }else{
-    next()
+  }else if(!requireAuth && isLoggedIn){
+    next({name: 'chat'})
+  } else {
+    next();
   }
 })
 

@@ -1,19 +1,19 @@
 <script setup>
     import { supabase } from '@/supabase'
     import { useRouter} from 'vue-router'
-    import {ref} from 'vue'
+    import { ref } from 'vue'
     const email = ref('')
     const username = ref('')
     const password = ref('')
-    const {push: routerPush} = useRouter()
+    const { push: routerPush } = useRouter()
 
     const onSubmit = async () =>{
         if(!email.value || !username.value || !password.value) return;
-        const {data, error} = await supabase.auth.signUp({
-            email:email.value,
+        const { data, error } = await supabase.auth.signUp({
+            email: email.value,
             password: password.value,
             options:{
-                data:{username:username.value}
+                data:{ username:username.value }
             }
         })
         if(error) {
