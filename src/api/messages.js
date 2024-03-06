@@ -1,5 +1,7 @@
 import { supabase } from '@/supabase'
+import { ref } from 'vue'
 
+export const messageList = ref([])
 
 export const insertMessage = async (content, author_id) =>{
     await supabase.from('messages').insert({
@@ -9,9 +11,20 @@ export const insertMessage = async (content, author_id) =>{
 }
 
 export const fetchMessages = async () =>{
-    const { data, error} = await supabase.from('messages').select('*, author:profiles(username, id, avatar_url)').order('created_at').limit(100)
+    const { data, error} = await supabase.from('messages').select('*, author:profiles(username, id, avatar_url)').order('created_at', {ascending: false}).limit(100)
     if(error){
         console.error('Error fetching messages:', error)
     }
-    return data
+    messageList.value = data.reverse()
+}
+
+export const subscribeToMessage = () => {
+    supabase.channel('messages_channel').on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'messages'
+    }, async () => {
+        await fetchMessages()
+    }).subscribe()
+    // { } ==> Accolade 
 }

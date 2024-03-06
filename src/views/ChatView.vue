@@ -4,14 +4,19 @@
     import AppNavbar from '@/components/AppNavbar.vue'
     import { useUserStore } from '@/stores/user'
     import { storeToRefs } from 'pinia'
-    import {insertMessage, fetchMessages} from '@/api/messages'
+    import {insertMessage, fetchMessages, subscribeToMessage, messageList} from '@/api/messages'
 
     const messageText = ref('')
-    const messageList = ref([])
+
+    subscribeToMessage((messages) => {
+        messageList.value = messages
+    })
+
     const textarea = ref(null)
     const { user } = storeToRefs(useUserStore())
+
     onMounted( async () => {
-        messageList.value = await fetchMessages()
+       await fetchMessages()
     })
 
     const addMessage = async () => {
@@ -28,13 +33,16 @@
 </script>
 
 <template>
-    <AppNavbar></AppNavbar>
-    <div v-for="(message, index) in messageList" :key="index" class="p-4">
-        <ChatMessage @delete="deleteMessage" :message="message"></ChatMessage>
-    </div>
-
-    <div class="flex align-center p-4">
-        <textarea ref="textarea" @keyup.enter.exact ="addMessage" v-model="messageText" name="message" id="message" rows="1" class="text-black rounded-md"></textarea>
-        <button class="p-2 bg-orange-600 rounded-md ml-3 hover:bg-orange-400" @click="addMessage">Envoyer</button>
+    <div class="flex flex-col h-full overflow-hidden">
+        <AppNavbar></AppNavbar>
+        <div class="overflow-auto grow">
+            <div v-for="(message, index) in messageList" :key="index" class="p-4">
+                <ChatMessage @delete="deleteMessage" :message="message"></ChatMessage>
+            </div>
+        </div>
+        <div class="flex align-center p-4 border-t border-t-slate-700">
+            <textarea ref="textarea" @keyup.enter.exact ="addMessage" v-model="messageText" name="message" id="message" rows="1" class="text-black rounded-md"></textarea>
+            <button class="p-2 bg-orange-600 rounded-md ml-3 hover:bg-orange-400" @click="addMessage">Envoyer</button>
+        </div>
     </div>
 </template>
