@@ -1,6 +1,11 @@
 <script setup>
     import { computed } from 'vue';
     import{ TrashIcon} from '@heroicons/vue/24/solid';    
+    import { useUserStore } from '@/stores/user';
+    import { storeToRefs } from 'pinia';
+
+    const { user } = storeToRefs(useUserStore())
+
     const props = defineProps({
         message:{
             type: Object,
@@ -38,7 +43,7 @@
         <p class="text-xl ">{{ message.author.username }} :
             {{ message.content }} <span class="text-xs text-opacity-40">{{ formattedDate }}</span>
         </p>
-        <button @click="emit('delete', message.id)" class="rounded-md ml-3 p-2 hover:bg-red-600" >
+        <button v-if="message.author.username === user?.username" @click="emit('delete', message.id)" class="rounded-md ml-3 p-2 hover:bg-red-600" >
            <TrashIcon class="w-8 h-8"/>   
         </button>
     </div>
