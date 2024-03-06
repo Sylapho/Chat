@@ -21,7 +21,7 @@
     }
 
     const formattedDate = computed(()=>{
-        const date = new Date(props.message.date)
+        const date = new Date(props.message.created_at)
         return formatDate(date);
     });
 </script>
