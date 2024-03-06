@@ -28,3 +28,7 @@ export const subscribeToMessage = () => {
     }).subscribe()
     // { } ==> Accolade 
 }
+
+export const deleteMessage = async (messageId) => {
+    await supabase.from('messages').delete().eq('id', messageId)
+}
