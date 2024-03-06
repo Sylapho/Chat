@@ -24,11 +24,17 @@
         const date = new Date(props.message.created_at)
         return formatDate(date);
     });
+
+    const avatarUrl = computed(() => {
+    if (!props.message.author.avatar_url)
+        return `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${props.message.author.username}`;
+    return props.message.author.avatar_url;
+});
 </script>
 
 <template>
     <div class="flex">
-        <img :src="message.author.avatar_url" class="rounded-full h-12 w-12" alt="avatar">
+        <img class="bg-slate-600 h-10 w-10 rounded-full mr-2" :src="avatarUrl" />
         <p class="text-xl ">{{ message.author.username }} :
             {{ message.content }} <span class="text-xs text-opacity-40">{{ formattedDate }}</span>
         </p>
