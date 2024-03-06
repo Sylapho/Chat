@@ -2,6 +2,7 @@
     import { supabase } from '@/supabase'
     import { useRouter} from 'vue-router'
     import { ref } from 'vue'
+    import appButton from '@/components/AppButton.vue'
     const email = ref('')
     const username = ref('')
     const password = ref('')
@@ -42,6 +43,6 @@
       <label for="password">Mot de passe</label>
       <input type="password" id="password" v-model="password" class="p-2 bg-slate-500" required/>
     </div>
-    <button type="submit" class="p-2 mt-4 bg-blue-500 rounded-md">Créer un compte</button>
+    <appButton></appButton>
   </form>
 </template>

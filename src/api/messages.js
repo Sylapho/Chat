@@ -30,5 +30,8 @@ export const subscribeToMessage = () => {
 }
 
 export const deleteMessage = async (messageId) => {
-    await supabase.from('messages').delete().eq('id', messageId)
+    const { error } = await supabase.from('messages').delete().eq('id', messageId)
+    if(error){
+        console.error("Error: deleting message")
+    }
 }
